@@ -7,7 +7,14 @@ final class LoginInitial extends LoginState {}
 
 class EmptyMobileState extends LoginState {}
 
-class SendOtpState extends LoginState {}
+class EmptyOtpState extends LoginState {}
+
+class SendOtpState extends LoginState {
+  final int otp;
+  final bool otpGenereted;
+
+  SendOtpState({required this.otp, required this.otpGenereted});
+}
 
 class CheckOtpState extends LoginState {}
 

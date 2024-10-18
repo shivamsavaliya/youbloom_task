@@ -1,10 +1,10 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:otp_pin_field/otp_pin_field.dart';
 import 'package:youbloom_task/Bloc/LoginBloc/login_bloc.dart';
-import 'package:youbloom_task/Constants/colors.dart';
+import 'package:youbloom_task/Constants/constants.dart';
+import 'package:youbloom_task/UI/Home/home.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -18,7 +18,6 @@ class _LoginState extends State<Login> {
   final LoginBloc _bloc = LoginBloc();
   final TextEditingController _controller = TextEditingController();
   late String otpText;
-  bool isVisible = false;
 
   @override
   void initState() {
@@ -99,20 +98,22 @@ class _LoginState extends State<Login> {
                 ),
               ),
             ),
-            OtpPinField(
-              onSubmit: (text) {
-                otpText = text;
-              },
-              onChange: (text) {
-                otpText = text;
-              },
-              otpPinFieldDecoration: OtpPinFieldDecoration.custom,
-              otpPinFieldStyle: const OtpPinFieldStyle(
-                activeFieldBackgroundColor: Colors.white,
-                defaultFieldBackgroundColor: Colors.white,
-                fieldBorderRadius: 10,
-              ),
-            ),
+            _bloc.otpGenereted
+                ? OtpPinField(
+                    onSubmit: (text) {
+                      otpText = text;
+                    },
+                    onChange: (text) {
+                      otpText = text;
+                    },
+                    otpPinFieldDecoration: OtpPinFieldDecoration.custom,
+                    otpPinFieldStyle: const OtpPinFieldStyle(
+                      activeFieldBackgroundColor: Colors.white,
+                      defaultFieldBackgroundColor: Colors.white,
+                      fieldBorderRadius: 10,
+                    ),
+                  )
+                : const SizedBox(),
             BlocConsumer<LoginBloc, LoginState>(
               bloc: _bloc,
               listener: (context, state) {
@@ -129,6 +130,11 @@ class _LoginState extends State<Login> {
                       ),
                     ),
                   );
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const Home(),
+                    ),
+                  );
                 } else if (state is OtpErrorState) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -142,32 +148,68 @@ class _LoginState extends State<Login> {
                       ),
                     ),
                   );
+                } else if (state is SendOtpState) {
+                  var result = state;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        result.otp.toString(),
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  );
+                  otpText = result.otp.toString();
+                } else if (state is EmptyMobileState) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text(
+                        "Enter Correct Mobile Number",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  );
+                } else if (state is EmptyOtpState) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text(
+                        "Enter Correct OTP",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  );
                 }
-                // else if(state is SendOtpState){
-                //   var otp = state.runtimeType as SendOtpState;
-                //   ScaffoldMessenger.of(context).showSnackBar(
-                //       SnackBar(
-                //         content:  Text(
-                //           otp.,
-                //           style: TextStyle(fontSize: 18),
-                //         ),
-                //         behavior: SnackBarBehavior.floating,
-                //         shape: RoundedRectangleBorder(
-                //           borderRadius: BorderRadius.circular(10),
-                //         ),
-                //       ),
-                //     );
-                // }
               },
               builder: (context, state) {
                 return ElevatedButton(
                   onPressed: () {
-                    print("otpp---" + otpText);
-                    if (otpText.isEmpty && otpText == '') {}
-                    // _bloc.add(CheckOtpEvent(otp: otpText));
+                    _bloc.add(ValidationEvent(formKey: _formKey));
+
+                    if (_bloc.otpGenereted) {
+                      _bloc.add(CheckOtpEvent(otp: otpText));
+                      setState(() {
+                        _bloc.otpGenereted = false;
+                      });
+                    } else {
+                      _bloc.add(SendOtpEvent());
+                      setState(() {
+                        _bloc.otpGenereted = true;
+                      });
+                    }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: btnColor,
+                    backgroundColor: mainColor,
                     fixedSize: const Size(140, 40),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),

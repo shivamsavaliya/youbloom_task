@@ -12,7 +12,6 @@ class ValidationEvent extends LoginEvent {
 
 class CheckOtpEvent extends LoginEvent {
   final String otp;
-
   CheckOtpEvent({required this.otp});
 }
 
