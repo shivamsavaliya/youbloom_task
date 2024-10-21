@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:youbloom_task/Constants/constants.dart';
+import 'package:youbloom_task/Models/home_data_model.dart';
+import 'package:youbloom_task/UI/details_page.dart';
 import '../../Bloc/HomeBloc/home_bloc.dart';
 
 class Home extends StatefulWidget {
@@ -66,13 +68,20 @@ class _HomeState extends State<Home> {
             ),
             BlocConsumer<HomeBloc, HomeState>(
               bloc: homeBloc,
-              listenWhen: (previous, current) => current is PostActionState,
-              buildWhen: (previous, current) => current is! PostActionState,
               listener: (context, state) {
                 if (state is PostFetchingErrorfulState) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text("Error occured while fetching the data"),
+                    ),
+                  );
+                } else if (state is GetDetailsState) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DetailPage(
+                        data: state.data,
+                      ),
                     ),
                   );
                 }
@@ -84,60 +93,53 @@ class _HomeState extends State<Home> {
                   );
                 } else if (state is PostFetchingSuccessfulState) {
                   return Expanded(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: state.data.length,
-                      itemBuilder: (context, index) => Card(
-                        margin: const EdgeInsets.all(8),
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                state.data[index].name.toString(),
-                                style:
-                                    Theme.of(context).textTheme.headlineSmall,
-                              ),
-                              Text(
-                                state.data[index].phone.toString(),
-                                style: Theme.of(context).textTheme.labelLarge,
-                              ),
-                              Text(
-                                state.data[index].email.toString(),
-                                style: Theme.of(context).textTheme.labelLarge,
-                              ),
-                              Text(
-                                state.data[index].website.toString(),
-                                style: Theme.of(context).textTheme.labelLarge,
-                              ),
-                              Text(
-                                state.data[index].company!.name.toString(),
-                                style: Theme.of(context).textTheme.labelLarge,
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                    child: _buildListView(state.data),
                   );
                 } else if (state is SearchSuccessfullState) {
                   if (state.results.isEmpty) {
                     return const Center(child: Text('No results found.'));
                   }
-                  return ListView.builder(
-                    itemCount: state.results.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(state.results[index].name!),
-                      );
-                    },
+                  return Expanded(
+                    child: _buildListView(state.results),
                   );
                 }
                 return const Center(child: Text('Not getting anything'));
               },
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildListView(List<HomeDataModel> data) {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: data.length,
+      itemBuilder: (context, index) => _buildListItem(data[index]),
+    );
+  }
+
+  Widget _buildListItem(HomeDataModel item) {
+    return Card(
+      margin: const EdgeInsets.all(8),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 8),
+        child: InkWell(
+          onTap: () => homeBloc.add(NameClickEvent(data: item)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                item.name.toString(),
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              Text(
+                item.phone.toString(),
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+            ],
+          ),
         ),
       ),
     );

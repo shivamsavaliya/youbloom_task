@@ -10,3 +10,9 @@ class SearchEvent extends HomeEvent {
 
   SearchEvent({required this.data});
 }
+
+class NameClickEvent extends HomeEvent {
+  final HomeDataModel data;
+
+  NameClickEvent({required this.data});
+}

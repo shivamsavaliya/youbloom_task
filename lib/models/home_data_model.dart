@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final homeDataModel = homeDataModelFromJson(jsonString);
-
 import 'dart:convert';
 
 List<HomeDataModel> homeDataModelFromJson(String str) =>

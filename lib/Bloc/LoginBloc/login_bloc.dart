@@ -27,11 +27,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   FutureOr<void> checkOtpEvent(CheckOtpEvent event, Emitter<LoginState> emit) {
+    otpGenereted = false;
     if (event.otp.isEmpty && event.otp == '' && event.otp.length < 4) {
       emit(EmptyOtpState());
     } else {
       if (event.otp == otp.toString()) {
-        emit(CheckOtpState());
+        emit(OtpSuccessState());
       } else {
         emit(OtpErrorState());
       }
@@ -40,6 +41,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   FutureOr<void> sendOtpEvent(SendOtpEvent event, Emitter<LoginState> emit) {
     otp = Random().nextInt(9999);
-    emit(SendOtpState(otp: otp, otpGenereted: true));
+    otpGenereted = true;
+    emit(SendOtpState(otp: otp));
   }
 }
