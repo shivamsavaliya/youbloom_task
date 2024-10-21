@@ -8,7 +8,6 @@ This is a demo Flutter application created for the Youbloom technical interview.
 - [Technical Details](#technical-details)
 - [Setup and Installation](#setup-and-installation)
 - [Additional Information](#additional-information)
-- [Contact](#contact)
 
 ## Features
 
