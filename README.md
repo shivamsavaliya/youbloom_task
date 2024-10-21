@@ -1,16 +1,47 @@
-# youbloom_task
+# Youbloom Flutter Demo App
 
-A new Flutter project.
+This is a demo Flutter application created for the Youbloom technical interview. The app demonstrates my skills in Flutter development, focusing on the BLoC pattern, API integration, UI design, and state management.
 
-## Getting Started
+## Table of Contents
 
-This project is a starting point for a Flutter application.
+- [Features](#features)
+- [Technical Details](#technical-details)
+- [Setup and Installation](#setup-and-installation)
+- [Additional Information](#additional-information)
+- [Contact](#contact)
 
-A few resources to get you started if this is your first Flutter project:
+## Features
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Login Page
+- Phone text field with mock OTP verification.
+- Login button with basic validation.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Main Page
+- List view displaying data from a public API.
+- Search bar for filtering the list.
+- Navigation to detail page on item tap.
+
+### Detail Page
+- Displays detailed information about the selected item.
+- Back button for navigation.
+
+## Technical Details
+- **State Management:** BLoC pattern (LoginBloc, MainPageBloc).
+- **API Integration:** Uses `http` package for API calls.
+- **UI Design:** Follows Material Design guidelines.
+
+## Setup and Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/shivamsavaliya/youbloom_task.git
+   cd youbloom_task
+
+2. Install dependencies:
+    ```bash
+   flutter pub get
+4. Run the app:
+    ```bash
+   flutter run
+
